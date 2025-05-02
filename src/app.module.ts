@@ -6,14 +6,16 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { DepartmentModule } from './department/department.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import appConfig from 'config/app.config';
 
+const AppConfig = appConfig();
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL,
+      url: AppConfig.DATABASE_URL,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: process.env.SYNCHRONIZE_DB === 'true',
+      synchronize: AppConfig.SYNCHRONIZE_DB === 'true',
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

@@ -1,5 +1,5 @@
 services:
-  tactology_db:
+  tactology_dept_db:
     image: postgres:latest
     ports:
       - '5432:5432'

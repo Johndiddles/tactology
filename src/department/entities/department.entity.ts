@@ -17,7 +17,7 @@ export class Department {
   id: string;
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Field(() => [SubDepartment], { nullable: true })

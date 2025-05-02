@@ -7,8 +7,9 @@ export class User {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Field()
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Field()
