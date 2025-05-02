@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { DepartmentModule } from './department/department.module';
-import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -26,6 +25,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService],
 })
 export class AppModule {}
