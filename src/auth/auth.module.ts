@@ -4,7 +4,9 @@ import { AuthResolver } from './auth.resolver';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Repository } from 'typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/auth.entity';
 
 @Module({
   imports: [
@@ -13,8 +15,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
       secret: process.env.JWT_SECRET || '',
       signOptions: { expiresIn: '1h' },
     }),
+    TypeOrmModule.forFeature([User]),
   ],
-  providers: [AuthResolver, AuthService, JwtStrategy, PrismaService],
+  providers: [AuthResolver, AuthService, JwtStrategy, Repository],
   exports: [AuthService],
 })
 export class AuthModule {}

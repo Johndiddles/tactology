@@ -1,10 +1,11 @@
+import { PrimaryGeneratedColumn } from 'typeorm';
 import { CreateDepartmentInput } from './create-department.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateDepartmentInput extends PartialType(CreateDepartmentInput) {
-  @Field(() => Int)
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Field()
   name: string;

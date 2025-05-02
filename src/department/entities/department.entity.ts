@@ -1,34 +1,59 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @ObjectType()
+@Entity()
 export class Department {
-  @Field(() => Int)
-  id: number;
+  @Field(() => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Field()
+  @Column()
   name: string;
 
-  @Field(() => [SubDepartment])
+  @Field(() => [SubDepartment], { nullable: true })
+  @OneToMany(() => SubDepartment, (sub) => sub.department, { cascade: true })
   subDepartments: SubDepartment[];
 
   @Field()
+  @CreateDateColumn()
   createdAt: Date;
 
   @Field()
+  @UpdateDateColumn()
   updatedAt: Date;
 }
 
 @ObjectType()
+@Entity()
 export class SubDepartment {
-  @Field(() => Int)
-  id: number;
+  @Field(() => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Field()
+  @Column()
   name: string;
 
+  @ManyToOne(() => Department, (department) => department.subDepartments, {
+    onDelete: 'CASCADE',
+  })
+  department: Department;
+
   @Field()
+  @CreateDateColumn()
   createdAt: Date;
 
   @Field()
+  @UpdateDateColumn()
   updatedAt: Date;
 }

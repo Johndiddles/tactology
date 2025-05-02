@@ -22,21 +22,6 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-// model Department {
-//   id              Int          @id @default(autoincrement())
-//   name            String       @unique
-//   parentId        Int?
-//   parent          Department?  @relation("SubDepartments", fields: [parentId], references: [id], onDelete: Cascade)
-//   subDepartments  Department[] @relation("SubDepartments")
-//   createdAt       DateTime     @default(now())
-//   updatedAt       DateTime     @updatedAt
-// }
-
-// model SubDepartment {
-//   id           String     @id @default(uuid())
-//   name         String
-// }
-
 model Department {
   id             Int          @id @default(autoincrement())
   name           String

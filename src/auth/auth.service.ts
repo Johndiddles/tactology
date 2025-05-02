@@ -1,14 +1,18 @@
-import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { CreateUserInput, LoginInput } from './entities/auth.entity';
+import { User } from './entities/auth.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { LoginInput } from './dto/login.input';
+import { CreateUserInput } from './dto/create-auth.input';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly prisma: PrismaService,
+    @InjectRepository(User)
+    private readonly authRepo: Repository<User>,
   ) {}
 
   private readonly saltRounds = 10;
@@ -22,7 +26,7 @@ export class AuthService {
   }
 
   async validateUser(payload: LoginInput) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.authRepo.findOne({
       where: { username: payload.username },
     });
     if (!user) throw new Error('Invalid credentials');
@@ -37,10 +41,12 @@ export class AuthService {
   }
 
   async create(createUserInput: CreateUserInput) {
-    return await this.prisma.user.create({ data: createUserInput });
+    const user = this.authRepo.create(createUserInput);
+    await this.authRepo.save(user);
+    return user;
   }
 
-  login(user: { id: number; username: string }) {
+  login(user: User) {
     const payload = { sub: user.id, username: user.username };
     return {
       accessToken: this.jwtService.sign(payload),

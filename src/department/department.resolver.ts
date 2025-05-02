@@ -24,7 +24,7 @@ export class DepartmentResolver {
   }
 
   @Query(() => Department, { name: 'department' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => Int }) id: string) {
     return this.departmentService.findOne(id);
   }
 
@@ -39,7 +39,7 @@ export class DepartmentResolver {
   }
 
   @Mutation(() => Department)
-  removeDepartment(@Args('id', { type: () => Int }) id: number) {
+  removeDepartment(@Args('id', { type: () => Int }) id: string) {
     return this.departmentService.remove(id);
   }
 }

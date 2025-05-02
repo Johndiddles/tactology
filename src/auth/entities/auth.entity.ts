@@ -1,44 +1,33 @@
-import { ObjectType, Field, Int, InputType } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@ObjectType()
-export class Auth {
-  @Field(() => Int)
-  id: number;
-  @Field()
-  username: string;
-
-  password: string;
-}
-
+@Entity()
 @ObjectType()
 export class User {
-  @Field(() => Int)
-  id: number;
+  @Field(() => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
   @Field()
+  @Column()
   username: string;
 
+  @Field()
+  @Column()
   password: string;
 }
-
-@InputType()
-export class CreateUserInput {
-  @Field()
-  username: string;
-  @Field()
-  password: string;
-}
-
-@InputType()
-export class LoginInput extends CreateUserInput {}
 
 @ObjectType()
 export class LoginResponse {
   @Field()
+  @Column()
   status: 'success' | 'failed';
   @Field()
+  @Column()
   message: string;
   @Field()
+  @Column()
   user?: User;
   @Field()
+  @Column()
   accessToken?: string;
 }

@@ -1,49 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDepartmentInput } from './dto/create-department.input';
 import { UpdateDepartmentInput } from './dto/update-department.input';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Repository } from 'typeorm';
+import { Department } from './entities/department.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class DepartmentService {
-  constructor(private prisma: PrismaService) {}
-  async create(createDepartmentInput: CreateDepartmentInput) {
-    return await this.prisma.department.create({
-      data: {
-        name: createDepartmentInput.name,
-        subDepartments: createDepartmentInput?.subDepartments?.length
-          ? {
-              create: createDepartmentInput.subDepartments.map((sub) => ({
-                name: sub.name,
-              })),
-            }
-          : undefined,
-      },
-      include: {
-        subDepartments: true,
-      },
+  constructor(
+    @InjectRepository(Department)
+    private departmentRepo: Repository<Department>,
+  ) {}
+  create(createDepartmentInput: CreateDepartmentInput) {
+    const deparment = this.departmentRepo.create({
+      name: createDepartmentInput.name,
+      subDepartments: createDepartmentInput?.subDepartments?.length
+        ? createDepartmentInput.subDepartments.map((sub) => ({
+            name: sub.name,
+          }))
+        : undefined,
     });
+
+    return this.departmentRepo.save(deparment);
   }
 
   async findAll() {
-    return await this.prisma.department.findMany({
-      include: {
-        subDepartments: true,
-      },
+    return await this.departmentRepo.find({
+      relations: ['subDepartments'],
     });
   }
 
-  async findOne(id: number) {
-    return await this.prisma.department.findUnique({ where: { id } });
+  async findOne(id: string) {
+    return await this.departmentRepo.findOne({ where: { id } });
   }
 
-  async update(id: number, updateDepartmentInput: UpdateDepartmentInput) {
-    return await this.prisma.department.update({
-      where: { id },
-      data: { name: updateDepartmentInput.name },
+  async update(id: string, updateDepartmentInput: UpdateDepartmentInput) {
+    const departmentToUpdate = await this.departmentRepo.findOne({
+      where: { id: id },
+      relations: ['subDepartments'],
+    });
+
+    if (!departmentToUpdate) {
+      throw new NotFoundException(`Department with ID ${id} not found`);
+    }
+
+    await this.departmentRepo.save({
+      ...departmentToUpdate,
+      updateDepartmentInput,
     });
   }
 
-  async remove(id: number) {
-    return await this.prisma.department.delete({ where: { id } });
+  async remove(id: string) {
+    return await this.departmentRepo.delete({ id });
   }
 }

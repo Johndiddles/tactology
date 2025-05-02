@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { DepartmentService } from './department.service';
 import { DepartmentResolver } from './department.resolver';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Department, SubDepartment } from './entities/department.entity';
+import { Repository } from 'typeorm';
 
 @Module({
-  providers: [DepartmentResolver, DepartmentService, PrismaService],
+  imports: [TypeOrmModule.forFeature([Department, SubDepartment])],
+  providers: [DepartmentResolver, DepartmentService, Repository],
 })
 export class DepartmentModule {}

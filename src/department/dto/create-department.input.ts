@@ -1,6 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { Length, ValidateNested } from 'class-validator';
+import { IsOptional, Length, ValidateNested } from 'class-validator';
 
 @InputType()
 export class CreateDepartmentInput {
@@ -13,6 +13,7 @@ export class CreateDepartmentInput {
   @Field(() => [CreateSubDepartmentInput], { nullable: true })
   @ValidateNested({ each: true })
   @Type(() => CreateSubDepartmentInput)
+  @IsOptional()
   subDepartments?: CreateSubDepartmentInput[];
 }
 

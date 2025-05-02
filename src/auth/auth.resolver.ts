@@ -1,25 +1,20 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import {
-  Auth,
-  CreateUserInput,
-  LoginInput,
-  LoginResponse,
-  User,
-} from './entities/auth.entity';
 import { UnauthorizedException } from '@nestjs/common';
+import { CreateUserInput } from './dto/create-auth.input';
+import { LoginInput } from './dto/login.input';
+import { LoginResponse, User } from './entities/auth.entity';
 
-@Resolver(() => Auth)
+@Resolver(() => User)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => User)
-  async createUser(
-    @Args('createUserInput') createUserInput: CreateUserInput,
-  ): Promise<User> {
+  async createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     const hashedPassword = await this.authService.hashPassword(
       createUserInput.password,
     );
+
     const user = await this.authService.create({
       ...createUserInput,
       password: hashedPassword,
@@ -29,9 +24,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => LoginResponse)
-  async login(
-    @Args('loginInput') loginInput: LoginInput,
-  ): Promise<LoginResponse> {
+  async login(@Args('loginInput') loginInput: LoginInput) {
     try {
       const user = await this.authService.validateUser(loginInput);
 
